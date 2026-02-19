@@ -1,0 +1,196 @@
+Basic Searches and Counting
+1. Count Total Lines: How many total lines are in the play text?
+wc -l hamlet.txt
+
+How many total lines are in hamlet.txt? >> 81
+How many total lines are in hamlet2.txt? >> 46
+2. Case-Insensitive Search: How many times does the word "hamlet" appear anywhere in the text?
+grep -ic 'hamlet' hamlet.txt
+
+How many times does 'hamlet' appear in hamlet.txt? >> 7
+How many times does 'hamlet' appear in hamlet2.txt?  >> 2
+3. Excluding Text: How many lines in the play do not contain the word "hamlet"?
+grep -iv 'hamlet' hamlet.txt | wc -l
+
+How many lines in the play do not contain the word "hamlet" in hamlet.txt? >> 75
+How many lines in the play do not contain the word "hamlet" in hamlet2.txt? >> 45
+4. Line Numbers: Display all lines where the word "father" appears, including the line number for context.
+grep -n 'father' hamlet.txt
+
+Copy output from the above search
+18:Seek for thy noble father in the dust:
+40:To give these mourning duties to your father:
+41:But, you must know, your father lost a father;
+42:That father lost, lost his, and the survivor bound
+56:Is death of fathers, and who still hath cried,
+60:As of a father: for let the world take note,
+
+Part B: Advanced Pattern Matching and Processing
+5. Counting Specific Dialogue: How many times does the character HAMLET speak (i.e., how many lines start with HAMLET: )?
+grep -c '^HAMLET:' hamlet.txt
+
+'^' anchor matches only the start of the line.
+
+The number of times HAMLET speaks in hamlet.txt is  >> 3
+6. Print all lines to the screen in which HAMLET speaks in hamlet.txt:
+HAMLET: Ay, madam, it is common.
+HAMLET: Seems, madam! nay, it is; I know not 'seems.'
+HAMLET: God's bodykins, man, much better: use every man
+
+
+7. How many times does the character POLONIUS speak in hamlet2.txt?
+
+The number of times POLONIUS speaks in hamlet2.txt is  >> 3
+8. Print all lines to the screen in which POLONIUS speaks in hamlet2.txt:
+POLONIUS: Yet here, Laertes! aboard, aboard, for shame!
+POLONIUS: What is't, Ophelia, he hath said to you?
+POLONIUS: Marry, well bethought:
+
+9. Counting Unique Speakers: Generate a list of all unique characters who speak in the play.
+# 1. Use the pattern to find all lines starting with a speaker name and colon.
+# 2. Cut out the speaker name (field 1, using ':' as the delimiter).
+# 3. Sort the names to group duplicates together.
+# 4. Use uniq to count the unique instances.
+
+grep '^[^ ]*:' hamlet.txt | cut -d':' -f1 | sort | uniq
+
+This pipeline first uses grep with a regular expression to extract all speaker names and colons, then cut isolates the names. The output is finally processed by sort and uniq to produce a definitive list of every unique character who delivers dialogue in the play.
+
+This expression '^[^ ]*:'ensures the line represents a character speaking, not just a reference to a character.
+
+    ^ Anchors the match to the start of the line.
+
+    [^ ]* Matches any number of characters that are NOT a space (this captures the speaker's name, which often has no spaces).
+
+    : Matches the literal colon, which definitively separates the speaker's name from their dialogue in the play's format.
+
+Copy/Paste the print of all unique speakers in hamlet.txt
+
+HAMLET
+KING
+OPHELIA
+POLONIUS
+QUEEN
+
+
+10. Copy/Paste the print of all unique speakers in hamlet2.txt
+
+LAERTES
+OPHELIA
+POLONIUS
+
+
+11. Adapt the command in #9 above to only output the number of unique speakers, instead of the list of speakers.  What command would do this
+
+grep '^[^ ]*:' hamlet.txt | cut -d':' -f1 | sort | uniq | wc -l
+12. Specific Word Count in a Character's Dialogue: How many times does a character use specific words?
+# 1. Filter the entire file to only include HAMLET's lines.
+# 2. Pipe that output to a new grep command that counts the occurrences of "madam".
+
+grep '^HAMLET:' hamlet.txt | grep -io 'madam' | wc -l
+
+How many of HAMLET's lines include also the word 'madam'  in hamlet.txt?  >> 2
+How many of LAERTES's lines include also the word 'Farewell'  in hamlet2.txt?  >> 2
+
+13. Finding Consecutive Vowels (Extended Regex): Find lines that contain three or more vowels (a, e, i, o, u) appearing consecutively. (Hint: Use grep -E for the + quantifier.)
+grep -E '[aeiou]{3,}' hamlet.txt
+
+
+QUEEN: Good Hamlet, cast thy nighted colour off,
+QUEEN: If it be,
+Nor the dejected 'haviour of the visage,
+To do obsequious sorrow: but to persever
+Of impious stubbornness; 'tis unmanly grief;
+
+
+Note: last 3 in yellow using: grep -E '[aeiou]{3,}' hamlet.txt
+But for all including capital letters use: grep -E '[aeiouAEIOU]{3,}' hamlet.txt or grep -Ei '[aeiou]{3,}' hamlet.txt
+
+
+
+Using Both Files: What follows are two examples that use both hamlet.txt (the first file) and hamlet2.txt (the second file) in interesting ways, focusing on counting and context.
+14: Comparing Character Dialogue Counts: This example uses both files to find the total number of lines spoken by a major character (HAMLET) versus a minor character (LAERTES), demonstrating the power of piping output to wc -l (word count - line count).
+Goal: Count the total number of dialogue lines spoken by Hamlet across both files, and compare it to the total number of lines spoken by Laertes.
+Search Goal
+Command
+Explanation
+Count Hamlet's Lines
+grep -cE '^HAMLET:' hamlet*.txt
+-c (Count): Suppresses normal output and prints only the count of matched lines. -E (Extended Regex): Allows us to use the ^ anchor to ensure we match lines where "HAMLET" is the speaker, not just a word in someone else's speech.
+Count Laertes's Lines
+grep -cE '^LAERTES:' hamlet2.txt
+Since Laertes only appears in the second file, we can limit the search to hamlet2.txt for efficiency, although searching both would also work.
+
+This shows how to use the ^ (caret) anchor and the powerful -c flag to quickly quantify data across a large set of text files.
+Using the above commands, answer the following questions:
+The total number of dialogue lines spoken by Hamlet across both files is >> 123
+[The total number of dialogue lines spoken by Laertes in hamlet2.txt is >> 12]  didn’t ask but here is the answer.
+
+
+
+
+15: Finding Interjections and Context Across Scenes: This example uses a common word or phrase to pull its surrounding context from both files, which is useful when tracking an idea or looking for similar language used in different parts of the play.
+Goal: Find every instance where the word "father" or "friend" is mentioned across both files, and display the two lines immediately surrounding the match to understand the context of the relationship being discussed.
+Search Goal
+Command
+Explanation
+Search for Family Mentions with Context
+grep -iEC 2 '(father|friend)' hamlet*.txt
+-i (Ignore Case): Matches Father, father, Friend, etc. -C 2 (Context): Tells grep to print 2 lines of context before and after the matching line. Extended Regex (A|B): Matches either "father" OR "friend" in a single search, using parentheses for grouping.
+
+ grep -iEC 2 '(father|friend)' hamlet*.txt
+hamlet.txt-
+hamlet.txt-QUEEN: Good Hamlet, cast thy nighted colour off,
+hamlet.txt:And let thine eye look like a friend on Denmark.
+hamlet.txt-Do not for ever with thy vailèd lids
+hamlet.txt:Seek for thy noble father in the dust:
+hamlet.txt-Thou know'st 'tis common; all that lives must die,
+hamlet.txt-Passing through nature to eternity.
+--
+hamlet.txt-
+hamlet.txt-KING: 'Tis sweet and commendable in your nature, Hamlet,
+hamlet.txt:To give these mourning duties to your father:
+hamlet.txt:But, you must know, your father lost a father;
+hamlet.txt:That father lost, lost his, and the survivor bound
+hamlet.txt-In filial obligation for some term
+hamlet.txt-To do obsequious sorrow: but to persever
+--
+hamlet.txt-A fault against the dead, a fault to nature,
+hamlet.txt-To reason most absurd, whose common theme
+hamlet.txt:Is death of fathers, and who still hath cried,
+hamlet.txt-From the first corse till he that died to-day,
+hamlet.txt-'This must be so.' We pray you, throw to earth
+hamlet.txt-This unprevailing woe, and think of us
+hamlet.txt:As of a father: for let the world take note,
+hamlet.txt-You are the most immediate to our throne;
+hamlet.txt-Our chiefest courtier, cousin, and our son.
+--
+hamlet2.txt-Nor any unproportioned thought his act.
+hamlet2.txt-Be thou familiar, but by no means vulgar.
+hamlet2.txt:The friends thou hast, and their adoption tried,
+hamlet2.txt-Grapple them to thy soul with hoops of steel;
+hamlet2.txt-But do not dull thy palm with entertainment
+--
+hamlet2.txt-For the apparel oft proclaims the man.
+hamlet2.txt-Neither a borrower nor a lender be;
+hamlet2.txt:For loan oft loses both itself and friend,
+hamlet2.txt-And borrowing dulls the edge of husbandry.
+hamlet2.txt-This above all: to thine own self be true,
+
+
+Context (-C): This is a critical flag for log file analysis or code review, as simply knowing a word exists isn't enough; you need the lines around it to understand the flow.
+Multiple Files: By using hamlet*.txt, grep automatically includes the file name in the output for each match, letting you immediately know if the line came from the first or second excerpt.
+Or Logic (\|): Demonstrates how to search for multiple patterns simultaneously, making the search far more efficient than running two separate commands.
+16) What command could you use to determine the number of lines that include the words "father/friend" across both files?
+grep -E 'father|friend' hamlet*.txt | wc -l
+grep -Ei 'father|friend' hamlet*.txt | wc -l   for all case-insensitive
+
+
+
+17) What is the number of lines that include the word "father" across both files?
+The number of lines that include the word "father" across both files is >> 6
+18) What is the number of lines that include the word "father or friend" across both files?
+The number of lines that include the word "father" or "friend" across both files is >> 45
+
+So github codespace + vsc is a nightmare!!!!!!!!!!!!!!  I did the entire lab and there is nothing to commit or push
+I however saved everything in a word doc.  CAUCHMAR
