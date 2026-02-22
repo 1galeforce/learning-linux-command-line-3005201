@@ -1,0 +1,5 @@
+Meeting on 2025-01-23
+Regular text here
+Log entry 2025-02-15
+No date on this line
+Event scheduled 2025-03-10

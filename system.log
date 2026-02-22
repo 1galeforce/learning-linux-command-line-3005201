@@ -1,0 +1,10 @@
+System started normally
+error processing temp files
+warning: disk space low
+critical error accessing temp files
+backup completed: temp files deleted
+INFO: System boot
+WARNING: Disk space low
+ERROR: Temp failure
+WARNING: Memory usage high
+INFO: All clear
