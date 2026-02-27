@@ -1,3 +1,7 @@
+if [[ ":$PATH:" != *":$(pwd)/bin:"* ]]; then
+    export PATH="$PATH:$(pwd)/bin"
+fi
+
 # ~/.bashrc
 
 # Enable colorful ls and grep output
@@ -15,3 +19,4 @@ alias grep='grep --color=auto'
 
 # Make prompt user-friendly
 PS1='\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ '
+./bin/repo.sh
