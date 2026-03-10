@@ -26,7 +26,7 @@ pause() {
 
 # --- Place code below  - example follows ---
 USER_NAME=$1
-TREET=$2
+TREAT=$2
 
 
 log "args: 1=<$1> 2=<$2> (#=$#)"
